@@ -87,16 +87,45 @@ const Orders = () => {
     });
   };
 
+  const downloadInvoice = (id) => {
+    setIsLoading(true);
+    axios.post("/api/orders/invoice", { orderId: id }).then((res) => {
+      if (res.data.success && res.data.success === true) {
+        console.log(res.data.invoice);
+
+        setIsLoading(false);
+        let link = document.createElement("a");
+        link.download = "order-invoice.pdf";
+        link.href = res.data.invoice.dataStr;
+        // Append to html link element page
+        document.body.appendChild(link);
+        // Start download
+        link.click();
+        // Clean up and remove the link
+        link.parentNode.removeChild(link);
+
+        // setForceReload(true);
+        // setViewOrder({});
+        // setViewOpen(false);
+        // setEditForm({
+        //   orderId: "",
+        //   newStatus: "",
+        //   remark: "",
+        // });
+      }
+    });
+  };
+
   const skeletonTable = (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell style={{ fontWeight: "bold" }}>Username</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Address summary</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Delivery type</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Total items</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Raw total</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Address Summary</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Delivery Type</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Total Items</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Subtotal</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Discounts</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Shipping</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Status</TableCell>
@@ -111,6 +140,9 @@ const Orders = () => {
               <Skeleton height={50} />
             </TableCell>
             <TableCell sx={{ width: "10rem", maxWidth: "10rem" }}>
+              <Skeleton height={50} />
+            </TableCell>
+            <TableCell>
               <Skeleton height={50} />
             </TableCell>
             <TableCell>
@@ -165,20 +197,30 @@ const Orders = () => {
           <Chip color={statusColor[order.status]} label={statusEnum[order.status]} />
         </TableCell>
         <TableCell align="right">
-          <Button
-            variant="contained"
-            onClick={() => {
-              setViewOrder(order);
-              setViewOpen(true);
-              setEditForm({
-                orderId: order._id,
-                newStatus: order.status,
-                remark: order.remark,
-              });
-            }}
-          >
-            View
-          </Button>
+          <Stack direction={"row"} gap={2}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                downloadInvoice(order._id);
+              }}
+            >
+              Invoice
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setViewOrder(order);
+                setViewOpen(true);
+                setEditForm({
+                  orderId: order._id,
+                  newStatus: order.status,
+                  remark: order.remark,
+                });
+              }}
+            >
+              View
+            </Button>
+          </Stack>
         </TableCell>
       </TableRow>
     );
@@ -193,7 +235,7 @@ const Orders = () => {
             <TableCell style={{ fontWeight: "bold" }}>Address summary</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Delivery type</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Total items</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Raw total</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Subtotal</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Discounts</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Shipping</TableCell>
             <TableCell align="right" style={{ fontWeight: "bold" }}>
@@ -222,7 +264,7 @@ const Orders = () => {
         <TableCell>
           {item.itemId._id} - {item.itemId.name}
         </TableCell>
-        <TableCell>{item.variation || "Variation unavailable"}</TableCell>
+        <TableCell>{item.variationName || "Variation unavailable"}</TableCell>
         <TableCell>{item.itemQuantity}</TableCell>
         <TableCell>{item.itemPrice}</TableCell>
         <TableCell>{item.itemDiscountedPrice || "Discount unavailable"}</TableCell>
@@ -377,7 +419,7 @@ const Orders = () => {
   );
 
   return (
-    <PageContainer title="Sample Page" description="this is Sample page">
+    <PageContainer title="Orders" description="this is Sample page">
       <DashboardCard title="Orders">{isLoading ? skeletonTable : ordersTable}</DashboardCard>
       <Modal
         open={viewOpen}

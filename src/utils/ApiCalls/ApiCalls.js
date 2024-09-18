@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_base = "http://localhost:4000/api/v1";
+const api_base = "https://electronics-ecomm-back.vercel.app/api/v1";
 
 export const baseApi = axios.create({
   baseURL: api_base,

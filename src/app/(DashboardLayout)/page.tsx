@@ -11,6 +11,9 @@ import MonthlyEarnings from "@/app/(DashboardLayout)/components/dashboard/Monthl
 import TotalIncome from "./components/dashboard/stats/TotalIncome";
 import TotalSales from "./components/dashboard/stats/TotalSales";
 import TotalCost from "./components/dashboard/stats/TotalCost";
+import LatestOrder from "./components/dashboard/latestOrder/LatestOrder";
+import LatestProducts from "./components/dashboard/latestProducts/LatestProducts";
+import BestProducts from "./components/dashboard/bestProducts/BestProducts";
 
 const Dashboard = () => {
   return (
@@ -30,24 +33,30 @@ const Dashboard = () => {
             <SalesOverview />
           </Grid>
           <Grid item xs={12} lg={4}>
-            <Grid container spacing={3}>
+            <LatestOrder />
+            {/* <Grid container spacing={3}>
               <Grid item xs={12}>
                 <YearlyBreakup />
               </Grid>
               <Grid item xs={12}>
                 <MonthlyEarnings />
               </Grid>
-            </Grid>
+            </Grid> */}
           </Grid>
-          <Grid item xs={12} lg={4}>
+          {/* <Grid item xs={12} lg={4}>
             <RecentTransactions />
+          </Grid> */}
+          <Grid item xs={4}>
+            {/* <ProductPerformance /> */}
+            <BestProducts />
           </Grid>
-          <Grid item xs={12} lg={8}>
-            <ProductPerformance />
+          <Grid item xs={8}>
+            {/* <ProductPerformance /> */}
+            <LatestProducts />
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Blog />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
     </PageContainer>
